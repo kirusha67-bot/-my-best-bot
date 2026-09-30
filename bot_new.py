@@ -227,7 +227,7 @@ async def admin_bonus_get_pts(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-@dp.message(AdminStates.waiting_for_bonus_points)
+@dp.message(F.text.in_({"🔥 Сделал на отлично (+1)", "💪 Кое-что сделал (+0.5)", "💩 Забил на задачу (-5)"}))
 async def admin_bonus_apply(message: types.Message, state: FSMContext):
     try:
         pts = float(message.text.strip())
