@@ -10,7 +10,7 @@ from aiogram.fsm.state import State, StatesGroup
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 # Токен вашего второго бота
-API_TOKEN = "8182562110:AAFXfAxtf-vZMf5oTkgXCAT87YN9Jw-y764"
+API_TOKEN = "8850117771:AAHyO8CLOxVxmPRvGOwuz4zfVNBUqCbRoJE"
 # Ваш личный ID суперадмина
 ADMIN_ID = 901920811
 
@@ -227,7 +227,7 @@ async def admin_bonus_get_pts(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-@dp.message(F.text.in_({"🔥 Сделал на отлично (+1)", "💪 Кое-что сделал (+0.5)", "💩 Забил на задачу (-5)"}))
+@dp.message(AdminStates.waiting_for_bonus_points)
 async def admin_bonus_apply(message: types.Message, state: FSMContext):
     try:
         pts = float(message.text.strip())
@@ -260,6 +260,8 @@ async def admin_penalty_get_pts(callback: types.CallbackQuery, state: FSMContext
     await state.set_state(AdminStates.waiting_for_penalty_points)
 
 
+# --- НАЧИСЛЕНИЕ С ШТРАФОМ -5 ЗА ПРОВАЛ И ОГОНЬКАМИ ---
+@dp.message(F.text.in_({"🔥 Сделал на отлично (+1)", "💪 Кое-что сделал (+0.5)", "💩 Забил на задачу (-5)"}))
 async def add_points_simple(message: types.Message):
     data = load_data()
     user_id = str(message.from_user.id)
@@ -304,6 +306,7 @@ async def delete_last_simple(message: types.Message):
     await message.answer("🗑 Действие отменено!")
 
 
+# --- СИСТЕМНЫЙ СТАРТ И БУДИЛЬНИК ---
 async def on_startup():
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
     scheduler.add_job(send_daily_reminder, "cron", hour=21, minute=0)
